@@ -5,6 +5,9 @@ import com.DistribuidoraJD.persistence.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Optional;
+
 @Component
 public class ProductDAO {
 
@@ -15,7 +18,23 @@ public class ProductDAO {
         return productRepository.save(product);
     }
 
-    public Product getByName(String name) {
-        return productRepository.getByName(name);
+    public Optional<Product> getByCode(long code) {
+        return productRepository.findByCode(code);
+    }
+
+    public boolean existProductWithCode(long code) {
+        return productRepository.existsByCode(code);
+    }
+
+    public boolean removeByCode(long code) {
+        if(existProductWithCode(code)){
+            productRepository.deleteByCode(code);
+            return true;
+        }
+        return false;
+    }
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 }

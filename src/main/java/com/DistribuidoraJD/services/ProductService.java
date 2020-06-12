@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Optional;
+
 @Scope(value = "session")
 @Component(value = "productService")
 public class ProductService {
@@ -16,7 +19,19 @@ public class ProductService {
         return productDAO.save(product);
     }
 
-    public Product getByName(String name) {
-        return productDAO.getByName(name);
+    public boolean existProductWithCode(long code) {
+        return productDAO.existProductWithCode(code);
+    }
+
+    public Optional<Product> getByCode(long code) {
+        return productDAO.getByCode(code);
+    }
+
+    public boolean removeByCode(long code) {
+        return productDAO.removeByCode(code);
+    }
+
+    public List<Product> getAllProducts() {
+        return productDAO.getAllProducts();
     }
 }

@@ -24,8 +24,4 @@ public class APIController {
         return new ResponseEntity<>("API TESTING", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/product")
-    public ResponseEntity getProductTest() {
-        return new ResponseEntity<>(productService.getByName("Don Satur"), HttpStatus.OK);
-    }
 }

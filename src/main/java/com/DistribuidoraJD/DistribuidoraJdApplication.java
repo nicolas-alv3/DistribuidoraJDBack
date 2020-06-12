@@ -20,22 +20,4 @@ public class DistribuidoraJdApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DistribuidoraJdApplication.class, args);
 	}
-
-	@Bean("threadPoolTaskExecutor")
-	public Executor taskExecutor() {
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(2);
-		executor.setMaxPoolSize(10);
-		executor.setQueueCapacity(20);
-		executor.initialize();
-		return executor;
-	}
-
-	@Bean
-	public CommandLineRunner demo(ProductRepository productRepository) {
-		return (args) -> {
-			Product donSatur = new Product("Don Satur");
-			productRepository.save(donSatur);
-		};
-	}
 }
