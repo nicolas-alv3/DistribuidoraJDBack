@@ -10,10 +10,12 @@ public class Product {
     @GeneratedValue
     private long id;
     private long code;
-    private Double unitPrice;
-    private Double packagePrice;
     private String name;
+    private Double unitPrice;
+    private Double packageDiscount; //porcentual
+    private Integer amountForDiscount;
     private Integer amountPerPackage;
+    private Integer stock;
 
     public String getName() {
         return name;
@@ -38,14 +40,6 @@ public class Product {
         this.unitPrice = unitPrice;
     }
 
-    public Double getPackagePrice() {
-        return packagePrice;
-    }
-
-    public void setPackagePrice(Double packagePrice) {
-        this.packagePrice = packagePrice;
-    }
-
     public long getCode() {
         return code;
     }
@@ -60,5 +54,29 @@ public class Product {
 
     public void setAmountPerPackage(Integer amountPerPackage) {
         this.amountPerPackage = amountPerPackage;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public Double getPackageDiscount() {
+        return packageDiscount;
+    }
+
+    public void setPackageDiscount(Double packageDiscount) {
+        this.packageDiscount = packageDiscount;
+    }
+
+    public Integer getAmountForDiscount() {
+        return amountForDiscount;
+    }
+
+    public void setAmountForDiscount(Integer amountForDiscount) {
+        this.amountForDiscount = amountForDiscount;
     }
 }

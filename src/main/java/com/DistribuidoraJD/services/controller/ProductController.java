@@ -27,8 +27,21 @@ public class ProductController {
         if(productService.existProductWithCode(product.getCode())){
             return new ResponseEntity<>("Ya existe un producto con ese código", HttpStatus.BAD_REQUEST);
         }
+        if(correctProduct(product)){
+            return new ResponseEntity<>(productService.save(product), HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Formulario mal escrito", HttpStatus.NOT_FOUND);
+    }
 
-        return new ResponseEntity<>(productService.save(product), HttpStatus.OK);
+    private boolean correctProduct(Product product) {
+        return (product.getCode() != 0
+                && product.getName()!= "" && product.getName() != null
+                && product.getAmountPerPackage() > 0  && product.getAmountPerPackage() != null
+                && product.getAmountForDiscount()> 0  && product.getAmountForDiscount() != null
+                && product.getPackageDiscount()> 0  && product.getPackageDiscount() != null
+                && product.getUnitPrice() > 0  && product.getUnitPrice() != null
+                && product.getStock() >= 0  && product.getUnitPrice() != null
+        );
     }
 
     @Transactional
@@ -38,7 +51,7 @@ public class ProductController {
             return new ResponseEntity<>("No existe un producto con ese código", HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<>(productService.save(product), HttpStatus.OK);
+        return new ResponseEntity<>(productService.update(product), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/product/{code}")

@@ -37,4 +37,11 @@ public class ProductDAO {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
+    public Product update(Product product) {
+
+        productRepository.deleteByCode(product.getCode());
+
+        return productRepository.save(product);
+    }
 }

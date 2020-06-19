@@ -34,4 +34,8 @@ public class ProductService {
     public List<Product> getAllProducts() {
         return productDAO.getAllProducts();
     }
+
+    public Product update(Product product) {
+        return productDAO.update(product);
+    }
 }
