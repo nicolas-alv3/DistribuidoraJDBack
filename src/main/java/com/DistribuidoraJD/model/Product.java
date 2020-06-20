@@ -1,5 +1,7 @@
 package com.DistribuidoraJD.model;
 
+import com.DistribuidoraJD.model.exception.LackOfStockException;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -30,7 +32,9 @@ public class Product {
         this.name = name;
     }
 
-    public Product(){}
+    public Product(){
+        this.stock = 0;
+    }
 
     public Double getUnitPrice() {
         return unitPrice;
@@ -78,5 +82,18 @@ public class Product {
 
     public void setAmountForDiscount(Integer amountForDiscount) {
         this.amountForDiscount = amountForDiscount;
+    }
+
+    public void addStock(int n) {
+        this.stock = stock + n;
+    }
+
+    public void substractStock(int n) {
+        if(stock >= n){
+            this.stock = stock - n;
+        }
+        else{
+            throw new LackOfStockException("No dispone de suficiente stock para restar");
+        }
     }
 }

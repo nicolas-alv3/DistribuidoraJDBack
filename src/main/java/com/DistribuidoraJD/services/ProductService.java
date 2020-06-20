@@ -1,6 +1,7 @@
 package com.DistribuidoraJD.services;
 
 import com.DistribuidoraJD.model.Product;
+import com.DistribuidoraJD.model.exception.LackOfStockException;
 import com.DistribuidoraJD.persistence.ProductDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -37,5 +38,25 @@ public class ProductService {
 
     public Product update(Product product) {
         return productDAO.update(product);
+    }
+
+    public boolean changeStock(long code, int quantity, String op) {
+        Optional<Product> maybeProduct = productDAO.getByCode(code);
+        if(maybeProduct.isPresent()){
+            Product product = maybeProduct.get();
+            switch(op) {
+                case "add":
+                    product.addStock(quantity);
+                    return true;
+                case "substract":
+                    try {
+                        product.substractStock(quantity);
+                        return true;
+                    }catch (LackOfStockException e){
+                       return false;
+                    }
+            }
+        }
+        return false;
     }
 }

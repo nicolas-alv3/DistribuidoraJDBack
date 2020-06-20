@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.Optional;
 
 @CrossOrigin
@@ -77,6 +78,16 @@ public class ProductController {
     @RequestMapping(method = RequestMethod.GET, value = "/allProducts")
     public ResponseEntity getAllProduct(){
         return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+    }
+
+    @Transactional
+    @RequestMapping(method = RequestMethod.POST, value = "/product/changeStock/{code}")
+    public ResponseEntity changeStock(@PathVariable("code") long code, @RequestBody HashMap<String,String> body){
+        if(!productService.changeStock(code,Integer.parseInt(body.get("quantity")),body.get("op"))){
+            return new ResponseEntity<>("No existe un producto con ese código", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>("Stock cambiado con exito", HttpStatus.OK);
     }
 
 }
