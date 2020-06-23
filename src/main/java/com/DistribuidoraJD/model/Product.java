@@ -27,9 +27,14 @@ public class Product {
         this.name = name;
     }
 
-    public Product(String name){
-
+    public Product(long code ,String name,Double unitPrice,Double packageDiscount , Integer amountForDiscount,Integer amountPerPackage,Integer stock){
+        this.code = code;
         this.name = name;
+        this.unitPrice = unitPrice;
+        this.packageDiscount = packageDiscount;
+        this.amountForDiscount = amountForDiscount;
+        this.amountPerPackage = amountPerPackage;
+        this.stock = stock;
     }
 
     public Product(){
