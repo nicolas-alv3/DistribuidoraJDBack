@@ -4,6 +4,6 @@ services: mysql
 
 before_install:
   - mysql -e 'CREATE DATABASE DistribuidoraJD;'
-  -
+  -mysql -e 'CREATE USER root WITH PASSWORD 'root';'
 script:
   - mvn test
