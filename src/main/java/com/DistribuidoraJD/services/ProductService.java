@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ public class ProductService {
     @Autowired
     private ProductDAO productDAO;
 
+    @Transactional
     public Product save(Product product){
         return productDAO.save(product);
     }
@@ -28,6 +30,7 @@ public class ProductService {
         return productDAO.getByCode(code);
     }
 
+    @Transactional
     public boolean removeByCode(long code) {
         return productDAO.removeByCode(code);
     }
@@ -36,10 +39,12 @@ public class ProductService {
         return productDAO.getAllProducts();
     }
 
+    @Transactional
     public Product update(Product product) {
         return productDAO.update(product);
     }
 
+    @Transactional
     public boolean changeStock(long code, int quantity, String op) {
         Optional<Product> maybeProduct = productDAO.getByCode(code);
         if(maybeProduct.isPresent()){

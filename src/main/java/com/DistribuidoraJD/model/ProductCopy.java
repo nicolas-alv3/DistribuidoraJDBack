@@ -8,7 +8,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Entity
-public class Product {
+public class ProductCopy {
     @Id
     @GeneratedValue
     private long id;
@@ -27,10 +27,6 @@ public class Product {
     @Positive
     private Integer stock;
 
-    public ProductCopy copy() {
-        return new ProductCopy(code,name,unitPrice,packageDiscount,amountForDiscount,amountPerPackage,stock);
-    }
-
     public String getName() {
         return name;
     }
@@ -39,7 +35,7 @@ public class Product {
         this.name = name;
     }
 
-    public Product(long code ,String name,Double unitPrice,Double packageDiscount , Integer amountForDiscount,Integer amountPerPackage,Integer stock){
+    public ProductCopy(long code ,String name,Double unitPrice,Double packageDiscount , Integer amountForDiscount,Integer amountPerPackage,Integer stock){
         this.code = code;
         this.name = name;
         this.unitPrice = unitPrice;
@@ -49,7 +45,7 @@ public class Product {
         this.stock = stock;
     }
 
-    public Product(){
+    public ProductCopy(){
         this.stock = 0;
     }
 

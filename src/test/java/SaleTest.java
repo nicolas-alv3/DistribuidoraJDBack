@@ -1,23 +1,28 @@
 import com.DistribuidoraJD.model.Product;
+import com.DistribuidoraJD.model.ProductCopy;
 import com.DistribuidoraJD.model.Sale;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SaleTest {
 
     Sale sale;
-    private Product pitusas;
-    private Product donSatur;
+    private ProductCopy pitusas;
+    private ProductCopy donSatur;
+    private HashSet<ProductCopy> list;
 
     @Before
     public void setup(){
+        list = new HashSet<>();
         sale = new Sale();
-        pitusas = new Product(0,"pitusa", 30d,40d,40,40,40);
-        donSatur = new Product(1,"donSatur", 30d,40d,40,40,40);
+        pitusas = new ProductCopy(0,"pitusa", 30d,40d,40,40,40);
+        donSatur = new ProductCopy(1,"donSatur", 30d,40d,40,40,40);
     }
     @Test
     public void testANewSaleHasZeroProductsAndZeroPrice(){
@@ -27,7 +32,7 @@ public class SaleTest {
 
     @Test
     public void testWhenIAddANewListWithOneProductToTheSaleThenTheSaleHasOneProduct(){
-        List<Product> list = new ArrayList<>();
+
         list.add(pitusas);
         sale.addProducts(list);
 
@@ -36,7 +41,6 @@ public class SaleTest {
 
     @Test
     public void testWhenIAddANewListWithOneProductOf30PesosToTheSaleThenTheSaleTotalPriceIs30Pesos(){
-        List<Product> list = new ArrayList<>();
         list.add(pitusas);
         sale.addProducts(list);
 
@@ -45,7 +49,6 @@ public class SaleTest {
 
     @Test
     public void testWhenIAddANewListWithTwoProductOf30PesosToTheSaleThenTheSaleTotalPriceIs60Pesos(){
-        List<Product> list = new ArrayList<>();
         list.add(pitusas);
         list.add(donSatur);
         sale.addProducts(list);
