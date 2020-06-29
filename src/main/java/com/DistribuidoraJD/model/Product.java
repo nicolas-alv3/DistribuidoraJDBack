@@ -8,38 +8,27 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Entity
-public class Product {
+public abstract class Product {
+    //Concrete product
     @Id
     @GeneratedValue
-    private long id;
+    protected long id;
     @Positive
-    private long code;
-    @Size(min=2, max=50)
-    private String name;
+    protected long code;
+    @Size(min = 2, max = 50)
+    protected String name;
     @Positive
-    private Double unitPrice;
+    protected Double unitPrice;
     @Positive
-    private Double packageDiscount; //porcentual
+    protected Double packageDiscount; //porcentual
     @Positive
-    private Integer amountForDiscount;
+    protected Integer amountForDiscount;
     @Positive
-    private Integer amountPerPackage;
+    protected Integer amountPerPackage;
     @Positive
-    private Integer stock;
+    protected Integer stock;
 
-    public ProductCopy copy() {
-        return new ProductCopy(code,name,unitPrice,packageDiscount,amountForDiscount,amountPerPackage,stock);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Product(long code ,String name,Double unitPrice,Double packageDiscount , Integer amountForDiscount,Integer amountPerPackage,Integer stock){
+    public Product(long code , String name, Double unitPrice, Double packageDiscount , Integer amountForDiscount, Integer amountPerPackage, Integer stock){
         this.code = code;
         this.name = name;
         this.unitPrice = unitPrice;
@@ -52,6 +41,16 @@ public class Product {
     public Product(){
         this.stock = 0;
     }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
     public Double getUnitPrice() {
         return unitPrice;
@@ -117,4 +116,5 @@ public class Product {
     public void setId(long id) {
         this.id = id;
     }
+
 }

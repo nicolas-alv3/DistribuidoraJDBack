@@ -1,6 +1,6 @@
 package com.DistribuidoraJD.services;
 
-import com.DistribuidoraJD.model.Product;
+import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.model.ProductCopy;
 import com.DistribuidoraJD.model.Sale;
 import com.DistribuidoraJD.persistence.SaleDAO;
@@ -26,15 +26,27 @@ public class SaleService {
 
     @Transactional
     public Sale postSale(SaleDTO saleDTO) throws BadSaleFormException {
-       Set<Optional<Product>> maybeProducts = saleDTO.getProductCodes().stream().map(productService::getByCode).collect(Collectors.toSet());
+       Set<Optional<ProductC>> maybeProducts = saleDTO.getProductCodes().stream().map(productService::getByCode).collect(Collectors.toSet());
 
        if(maybeProducts.stream().allMatch(Optional::isPresent)){
-           Set<Product> products = maybeProducts.stream().map(Optional::get).collect(Collectors.toSet());// Los obtiene
-           Set<ProductCopy> productsCopy = products.stream().map(Product::copy).collect(Collectors.toSet());//Los copia
+           Set<ProductC> productCS = maybeProducts.stream().map(Optional::get).collect(Collectors.toSet());// Los obtiene
+           Set<ProductCopy> productsCopy = productCS.stream().map(ProductC::copy).collect(Collectors.toSet());//Los copia
            Sale sale = new Sale(saleDTO.getClientName(),productsCopy);
 
            return saleDao.save(sale);
        }
        throw new BadSaleFormException();
+    }
+
+    public Optional<Sale> getById(long id) {
+        Optional<Sale> maybeSale = saleDao.getById(id);
+        if(maybeSale.isPresent()){
+            maybeSale.get().getProducts();
+        }
+        return maybeSale;
+    }
+
+    public List<Sale> getAll() {
+        return saleDao.getAll();
     }
 }

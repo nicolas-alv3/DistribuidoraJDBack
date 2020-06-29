@@ -1,6 +1,6 @@
 package com.DistribuidoraJD.persistence;
 
-import com.DistribuidoraJD.model.Product;
+import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.persistence.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,11 +14,11 @@ public class ProductDAO {
     @Autowired
     private ProductRepository productRepository;
 
-    public Product save(Product product){
-        return productRepository.save(product);
+    public ProductC save(ProductC productC){
+        return productRepository.save(productC);
     }
 
-    public Optional<Product> getByCode(long code) {
+    public Optional<ProductC> getByCode(long code) {
         return productRepository.findByCode(code);
     }
 
@@ -34,14 +34,14 @@ public class ProductDAO {
         return false;
     }
 
-    public List<Product> getAllProducts() {
+    public List<ProductC> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public Product update(Product product) {
+    public ProductC update(ProductC productC) {
 
-        productRepository.deleteByCode(product.getCode());
+        productRepository.deleteByCode(productC.getCode());
 
-        return productRepository.save(product);
+        return productRepository.save(productC);
     }
 }

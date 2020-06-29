@@ -1,7 +1,7 @@
 package com.DistribuidoraJD.services.controller;
 
 
-import com.DistribuidoraJD.model.Product;
+import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -25,31 +25,31 @@ public class ProductController {
 
 
     @RequestMapping(method = RequestMethod.POST, value = "/product")
-    public ResponseEntity postProduct(@RequestBody @Valid Product product, BindingResult bindingResult){
+    public ResponseEntity postProduct(@RequestBody @Valid ProductC productC, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>("Error en el formulario",HttpStatus.BAD_REQUEST);
         }
-        if(productService.existProductWithCode(product.getCode())){
+        if(productService.existProductWithCode(productC.getCode())){
             return new ResponseEntity("Ya existe un producto con ese código", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(productService.save(product), HttpStatus.OK);
+        return new ResponseEntity<>(productService.save(productC), HttpStatus.OK);
     }
 
 
     @RequestMapping(method = RequestMethod.PUT, value = "/product")
-    public ResponseEntity updateProduct(@RequestBody Product product,BindingResult bindingResult) {
+    public ResponseEntity updateProduct(@RequestBody ProductC productC, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>("Error en el formulario",HttpStatus.BAD_REQUEST);
         }
-        if(!productService.existProductWithCode(product.getCode())){
+        if(!productService.existProductWithCode(productC.getCode())){
             return new ResponseEntity<>("No existe producto con ese codigo",HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(productService.update(product), HttpStatus.OK);
+        return new ResponseEntity<>(productService.update(productC), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/product/{code}")
     public ResponseEntity getProduct(@PathVariable("code") long code) {
-        Optional<Product> maybeProduct = productService.getByCode(code);
+        Optional<ProductC> maybeProduct = productService.getByCode(code);
         if(!maybeProduct.isPresent()){
             return new ResponseEntity<>("No se encontro el producto",HttpStatus.NOT_FOUND);
         }
@@ -66,7 +66,7 @@ public class ProductController {
         return new ResponseEntity<>("Producto con código " + code+ " eliminado", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/allProducts")
+    @RequestMapping(method = RequestMethod.GET, value = "/product/all")
     public ResponseEntity getAllProduct(){
         return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
     }

@@ -1,6 +1,6 @@
 package com.DistribuidoraJD.services;
 
-import com.DistribuidoraJD.model.Product;
+import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.model.exception.LackOfStockException;
 import com.DistribuidoraJD.persistence.ProductDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +18,15 @@ public class ProductService {
     private ProductDAO productDAO;
 
     @Transactional
-    public Product save(Product product){
-        return productDAO.save(product);
+    public ProductC save(ProductC productC){
+        return productDAO.save(productC);
     }
 
     public boolean existProductWithCode(long code) {
         return productDAO.existProductWithCode(code);
     }
 
-    public Optional<Product> getByCode(long code) {
+    public Optional<ProductC> getByCode(long code) {
         return productDAO.getByCode(code);
     }
 
@@ -35,27 +35,27 @@ public class ProductService {
         return productDAO.removeByCode(code);
     }
 
-    public List<Product> getAllProducts() {
+    public List<ProductC> getAllProducts() {
         return productDAO.getAllProducts();
     }
 
     @Transactional
-    public Product update(Product product) {
-        return productDAO.update(product);
+    public ProductC update(ProductC productC) {
+        return productDAO.update(productC);
     }
 
     @Transactional
     public boolean changeStock(long code, int quantity, String op) {
-        Optional<Product> maybeProduct = productDAO.getByCode(code);
+        Optional<ProductC> maybeProduct = productDAO.getByCode(code);
         if(maybeProduct.isPresent()){
-            Product product = maybeProduct.get();
+            ProductC productC = maybeProduct.get();
             switch(op) {
                 case "add":
-                    product.addStock(quantity);
+                    productC.addStock(quantity);
                     return true;
                 case "substract":
                     try {
-                        product.substractStock(quantity);
+                        productC.substractStock(quantity);
                         return true;
                     }catch (LackOfStockException e){
                        return false;
