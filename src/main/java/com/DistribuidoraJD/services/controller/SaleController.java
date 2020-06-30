@@ -1,6 +1,5 @@
 package com.DistribuidoraJD.services.controller;
 
-import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.model.Sale;
 import com.DistribuidoraJD.services.SaleService;
 import com.DistribuidoraJD.services.dto.SaleDTO;
@@ -50,8 +49,8 @@ public class SaleController {
         return new ResponseEntity<>(maybeProduct.get(), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/sale/all")
-    public ResponseEntity getAllSale() {
-        return new ResponseEntity<>(saleService.getAll(), HttpStatus.OK);
+    @RequestMapping(method = RequestMethod.GET, value = "/sale/all/{page}")
+    public ResponseEntity getAllSale(@PathVariable int page) {
+        return new ResponseEntity<>(saleService.getAll(page), HttpStatus.OK);
     }
 }

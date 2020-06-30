@@ -8,10 +8,10 @@ import com.DistribuidoraJD.services.dto.SaleDTO;
 import com.DistribuidoraJD.services.exception.BadSaleFormException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,7 +46,7 @@ public class SaleService {
         return maybeSale;
     }
 
-    public List<Sale> getAll() {
-        return saleDao.getAll();
+    public Page<Sale> getAll(int page) {
+        return saleDao.getAll(page);
     }
 }

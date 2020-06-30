@@ -66,9 +66,9 @@ public class ProductController {
         return new ResponseEntity<>("Producto con código " + code+ " eliminado", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/product/all")
-    public ResponseEntity getAllProduct(){
-        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+    @RequestMapping(method = RequestMethod.GET, value = "/product/all/{page}")
+    public ResponseEntity getAllProduct(@PathVariable("page") int page){
+        return new ResponseEntity<>(productService.getAllProducts(page), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/product/changeStock/{code}")

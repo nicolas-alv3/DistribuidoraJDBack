@@ -5,6 +5,7 @@ import com.DistribuidoraJD.model.exception.LackOfStockException;
 import com.DistribuidoraJD.persistence.ProductDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
@@ -35,8 +36,8 @@ public class ProductService {
         return productDAO.removeByCode(code);
     }
 
-    public List<ProductC> getAllProducts() {
-        return productDAO.getAllProducts();
+    public Page<ProductC> getAllProducts(int page) {
+        return productDAO.getAllProducts(page);
     }
 
     @Transactional

@@ -3,6 +3,10 @@ package com.DistribuidoraJD.persistence;
 import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.persistence.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -34,8 +38,9 @@ public class ProductDAO {
         return false;
     }
 
-    public List<ProductC> getAllProducts() {
-        return productRepository.findAll();
+    public Page<ProductC> getAllProducts(int page) {
+        Pageable pagination = PageRequest.of(page,15);
+        return productRepository.findAll(pagination);
     }
 
     public ProductC update(ProductC productC) {
