@@ -1,4 +1,6 @@
 package com.DistribuidoraJD.services.exception;
 
-public class BadSaleFormException extends Exception {
+import java.io.IOException;
+
+public class BadSaleFormException extends IOException {
 }

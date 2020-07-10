@@ -1,21 +1,44 @@
 package com.DistribuidoraJD.services.dto;
 
+import com.DistribuidoraJD.model.Client;
+
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class SaleDTO {
     @NotNull
-    private String clientName;
+    private Client client;
+    @NotNull
+    private String details;
     @NotEmpty
-    private List<Long> productCodes;
+    private List<SaleItemDTO> saleItems;
 
-    public List<Long> getProductCodes() {
-        return productCodes;
+    public SaleDTO() {
+    }
+
+    public List<SaleItemDTO> getSaleItems() {
+        return saleItems;
     }
 
 
-    public String getClientName() {
-        return clientName;
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public void setSaleItems(List<SaleItemDTO> saleItems) {
+        this.saleItems = saleItems;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

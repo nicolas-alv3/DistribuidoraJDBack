@@ -27,12 +27,12 @@ public class SaleController {
 
     @Transactional
     @RequestMapping(method = RequestMethod.POST, value = "/sale")
-    public ResponseEntity postSale(@RequestBody @Valid SaleDTO saleDTO, BindingResult bindingResult) throws BadSaleFormException {
+    public ResponseEntity postSale(@RequestBody @Valid SaleDTO saleDTO, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>("Hay errores en el formulario",HttpStatus.BAD_REQUEST);
         }
         try{
-            return new ResponseEntity<>(saleService.postSale(saleDTO), HttpStatus.OK);
+            return new ResponseEntity<>(saleService.postSale(saleDTO), HttpStatus.CREATED);
         }
         catch (BadSaleFormException e){
             return new ResponseEntity<>("Algun codigo de producto no existe",HttpStatus.BAD_REQUEST);
@@ -45,7 +45,6 @@ public class SaleController {
         if(!maybeProduct.isPresent()){
             return new ResponseEntity<>("No se encontro la venta",HttpStatus.NOT_FOUND);
         }
-
         return new ResponseEntity<>(maybeProduct.get(), HttpStatus.OK);
     }
 

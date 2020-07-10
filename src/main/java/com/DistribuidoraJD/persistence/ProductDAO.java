@@ -49,4 +49,16 @@ public class ProductDAO {
 
         return productRepository.save(productC);
     }
+
+    public List<String> getAllProductNames() {
+        return productRepository.getAllNames();
+    }
+
+    public Optional<ProductC> getByName(String name) {
+        return productRepository.findByName(name);
+    }
+
+    public boolean existProductWithName(String name) {
+        return productRepository.findByName(name).isPresent();
+    }
 }

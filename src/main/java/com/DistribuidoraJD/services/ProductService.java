@@ -23,10 +23,6 @@ public class ProductService {
         return productDAO.save(productC);
     }
 
-    public boolean existProductWithCode(long code) {
-        return productDAO.existProductWithCode(code);
-    }
-
     public Optional<ProductC> getByCode(long code) {
         return productDAO.getByCode(code);
     }
@@ -64,5 +60,21 @@ public class ProductService {
             }
         }
         return false;
+    }
+
+    public List<String> getAllProductsNames() {
+        return productDAO.getAllProductNames();
+    }
+
+    public Optional<ProductC> getByName(String name) {
+        return productDAO.getByName(name);
+    }
+
+    public boolean existProductWithCode(long code) {
+        return productDAO.existProductWithCode(code);
+    }
+
+    public boolean existProductWithName(String name) {
+        return productDAO.existProductWithName(name);
     }
 }

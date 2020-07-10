@@ -5,49 +5,41 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Entity
+@NamedEntityGraph(name = "Sale.detail",
+        attributeNodes = @NamedAttributeNode("items"))
 public class Sale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotNull
-    private String clientName;
-    @JsonBackReference
+    @OneToOne(cascade=CascadeType.ALL)
+    Client client;
+    //@JsonBackReference Con esto no te trae los datos de una
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private Set<ProductCopy> products;
+    private List<SaleItem> items;
     @NotNull
     private LocalDate date;
+    @NotNull
+    private String details;
 
     public Sale(){
-        products = new HashSet<>();
+        items = new ArrayList<>();
         date=LocalDate.now();
     }
 
-    public Sale(String clientName, Set<ProductCopy> list){
-        this.clientName = clientName;
-        products = list;
+    public Sale(Client cliente, List<SaleItem> list,String detail){
+        client = cliente;
+        items = list;
+        details = detail;
         date=LocalDate.now();
-    }
-
-    public Set<ProductCopy> getProducts() {
-        return this.products;
     }
 
     public Double getTotalPrice() {
         //Sumatory of all unitPrices
-        return products.stream().map(p -> p.getUnitPrice()).mapToDouble(Double::doubleValue).sum();
-    }
-
-    public int getAmountOfProducts(){
-        return products.size();
-    }
-
-    public void addProducts(Set<ProductCopy> list) {
-        products.addAll(list);
+        return items.stream().map(SaleItem::getPrice).reduce(0d,Double::sum);
     }
 
     public long getId() {
@@ -58,19 +50,31 @@ public class Sale {
         this.id = id;
     }
 
-    public String getClientName() {
-        return clientName;
-    }
-
-    public Set<ProductCopy> getProductsCopy(){
-        return products;
-    }
-
-    public void setClientName(String clientName) {
-        this.clientName = clientName;
+    public Client getClient() {
+        return client;
     }
 
     public LocalDate getDate() {
         return date;
+    }
+
+    public List<SaleItem> getItems() {return items;}
+
+    public List<SaleItem> setItems() {return items;}
+
+    public void addItem(SaleItem saleItem) {
+        this.items.add(saleItem);
+    }
+
+    public int getAmountOfProducts() {
+        return items.stream().map(SaleItem::getAmount).reduce(0,Integer::sum);
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

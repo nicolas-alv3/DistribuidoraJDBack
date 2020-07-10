@@ -3,6 +3,7 @@ package com.DistribuidoraJD.services;
 import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.model.ProductCopy;
 import com.DistribuidoraJD.model.Sale;
+import com.DistribuidoraJD.model.SaleItem;
 import com.DistribuidoraJD.persistence.SaleDAO;
 import com.DistribuidoraJD.services.dto.SaleDTO;
 import com.DistribuidoraJD.services.exception.BadSaleFormException;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,23 +28,22 @@ public class SaleService {
 
     @Transactional
     public Sale postSale(SaleDTO saleDTO) throws BadSaleFormException {
-       Set<Optional<ProductC>> maybeProducts = saleDTO.getProductCodes().stream().map(productService::getByCode).collect(Collectors.toSet());
+        //Check if all products exist
+        List<Optional<ProductC>> maybeProducts = saleDTO.getSaleItems().stream().map(si -> fetchProduct(si.getCode())).collect(Collectors.toList());
+        if(maybeProducts.stream().allMatch(Optional::isPresent)){
+            //Initialize SaleItems
+            List<SaleItem> items = saleDTO.getSaleItems().stream().map(si -> new SaleItem(fetchProduct(si.getCode()).get().copy(),si.getAmount())).collect(Collectors.toList());
+            return saleDao.save(new Sale(saleDTO.getClient(),items,saleDTO.getDetails()));
+        }
+        throw new BadSaleFormException();
+    }
 
-       if(maybeProducts.stream().allMatch(Optional::isPresent)){
-           Set<ProductC> productCS = maybeProducts.stream().map(Optional::get).collect(Collectors.toSet());// Los obtiene
-           Set<ProductCopy> productsCopy = productCS.stream().map(ProductC::copy).collect(Collectors.toSet());//Los copia
-           Sale sale = new Sale(saleDTO.getClientName(),productsCopy);
-
-           return saleDao.save(sale);
-       }
-       throw new BadSaleFormException();
+    private Optional<ProductC> fetchProduct(Long code) {
+        return productService.getByCode(code);
     }
 
     public Optional<Sale> getById(long id) {
         Optional<Sale> maybeSale = saleDao.getById(id);
-        if(maybeSale.isPresent()){
-            maybeSale.get().getProducts();
-        }
         return maybeSale;
     }
 

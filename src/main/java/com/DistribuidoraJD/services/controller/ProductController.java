@@ -32,6 +32,9 @@ public class ProductController {
         if(productService.existProductWithCode(productC.getCode())){
             return new ResponseEntity("Ya existe un producto con ese código", HttpStatus.NOT_FOUND);
         }
+        if(productService.existProductWithName(productC.getName())){
+            return new ResponseEntity("Ya existe un producto con ese nombre", HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(productService.save(productC), HttpStatus.OK);
     }
 
@@ -44,12 +47,25 @@ public class ProductController {
         if(!productService.existProductWithCode(productC.getCode())){
             return new ResponseEntity<>("No existe producto con ese codigo",HttpStatus.NOT_FOUND);
         }
+        if(productService.existProductWithName(productC.getName())){
+            return new ResponseEntity<>("Ya existe un producto con ese nombre",HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(productService.update(productC), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/product/{code}")
     public ResponseEntity getProduct(@PathVariable("code") long code) {
         Optional<ProductC> maybeProduct = productService.getByCode(code);
+        if(!maybeProduct.isPresent()){
+            return new ResponseEntity<>("No se encontro el producto",HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(maybeProduct.get(), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/product/name/{name}")
+    public ResponseEntity getProduct(@PathVariable("name") String name) {
+        Optional<ProductC> maybeProduct = productService.getByName(name);
         if(!maybeProduct.isPresent()){
             return new ResponseEntity<>("No se encontro el producto",HttpStatus.NOT_FOUND);
         }
@@ -69,6 +85,11 @@ public class ProductController {
     @RequestMapping(method = RequestMethod.GET, value = "/product/all/{page}")
     public ResponseEntity getAllProduct(@PathVariable("page") int page){
         return new ResponseEntity<>(productService.getAllProducts(page), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/product/allNames")
+    public ResponseEntity getAllProductNames(){
+        return new ResponseEntity<>(productService.getAllProductsNames(), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/product/changeStock/{code}")
