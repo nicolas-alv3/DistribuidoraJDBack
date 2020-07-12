@@ -1,6 +1,6 @@
 package com.DistribuidoraJD.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.DistribuidoraJD.model.exception.LackOfStockException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,10 +31,15 @@ public class Sale {
     }
 
     public Sale(Client cliente, List<SaleItem> list,String detail){
+        items = new ArrayList<>();
+        this.addList(list);
         client = cliente;
-        items = list;
         details = detail;
         date=LocalDate.now();
+    }
+
+    private void addList(List<SaleItem> list) {
+        list.forEach(i -> this.addItem(i));
     }
 
     public Double getTotalPrice() {
@@ -63,7 +68,16 @@ public class Sale {
     public List<SaleItem> setItems() {return items;}
 
     public void addItem(SaleItem saleItem) {
-        this.items.add(saleItem);
+        if(isSufficientStock(saleItem)){
+            this.items.add(saleItem);
+        }
+        else{
+            throw new LackOfStockException("Insufficient Stock");
+        }
+    }
+
+    private boolean isSufficientStock(SaleItem saleItem) {
+        return saleItem.getAmount() <= saleItem.getProduct().getStock();
     }
 
     public int getAmountOfProducts() {

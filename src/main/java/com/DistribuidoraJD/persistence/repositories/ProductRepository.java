@@ -15,7 +15,7 @@ public interface ProductRepository extends JpaRepository<ProductC,Long> {
 
     Optional<ProductC> findByName(String name);
 
-    @Query("SELECT p.name FROM ProductC p")
+    @Query("SELECT p.name FROM ProductC p WHERE p.stock > 0")
     List<String> getAllNames();
 
     boolean existsByCode(long code);

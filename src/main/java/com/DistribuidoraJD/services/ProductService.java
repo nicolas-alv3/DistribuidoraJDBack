@@ -1,6 +1,7 @@
 package com.DistribuidoraJD.services;
 
 import com.DistribuidoraJD.model.ProductC;
+import com.DistribuidoraJD.model.SaleItem;
 import com.DistribuidoraJD.model.exception.LackOfStockException;
 import com.DistribuidoraJD.persistence.ProductDAO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,5 +77,11 @@ public class ProductService {
 
     public boolean existProductWithName(String name) {
         return productDAO.existProductWithName(name);
+    }
+
+    public void substractStock(List<SaleItem> items) {
+        items.forEach(
+                item -> this.changeStock(item.getProduct().getCode(),item.getAmount(),"substract")
+        );
     }
 }

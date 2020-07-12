@@ -5,6 +5,7 @@ import com.DistribuidoraJD.model.exception.LackOfStockException;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -25,7 +26,7 @@ public abstract class Product {
     protected Integer amountForDiscount;
     @Positive
     protected Integer amountPerPackage;
-    @Positive
+    @PositiveOrZero
     protected Integer stock;
 
     public Product(long code , String name, Double unitPrice, Double packageDiscount , Integer amountForDiscount, Integer amountPerPackage, Integer stock){

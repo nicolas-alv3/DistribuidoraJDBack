@@ -1,6 +1,7 @@
 package com.DistribuidoraJD.services.controller;
 
 import com.DistribuidoraJD.model.Sale;
+import com.DistribuidoraJD.model.SaleItem;
 import com.DistribuidoraJD.services.SaleService;
 import com.DistribuidoraJD.services.dto.SaleDTO;
 import com.DistribuidoraJD.services.exception.BadSaleFormException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin
@@ -31,11 +33,18 @@ public class SaleController {
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>("Hay errores en el formulario",HttpStatus.BAD_REQUEST);
         }
-        try{
-            return new ResponseEntity<>(saleService.postSale(saleDTO), HttpStatus.CREATED);
+        if(!saleService.checkIsValidSale(saleDTO)){
+            return new ResponseEntity<>("Algun codigo de producto no existe",HttpStatus.NOT_FOUND);
         }
-        catch (BadSaleFormException e){
-            return new ResponseEntity<>("Algun codigo de producto no existe",HttpStatus.BAD_REQUEST);
+        List<SaleItem> items = saleService.fetchItems(saleDTO);
+        if(!items.stream().allMatch(SaleItem::isValid)){
+            return new ResponseEntity<>("Estas queriendo vender mas el stock que tenés",HttpStatus.BAD_REQUEST);
+        }
+        try{
+            return new ResponseEntity<>(saleService.postSale(saleDTO,items), HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>("Algo salio mal,la venta no pudo ser concretada",HttpStatus.BAD_REQUEST);
         }
     }
 

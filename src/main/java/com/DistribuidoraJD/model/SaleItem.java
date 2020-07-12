@@ -1,6 +1,7 @@
 package com.DistribuidoraJD.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Positive;
 
 @Entity
 public class SaleItem {
@@ -10,6 +11,7 @@ public class SaleItem {
     private long id;
     @OneToOne(cascade=CascadeType.ALL)
     private ProductCopy product;
+    @Positive
     private int amount;
 
     public SaleItem(){};
@@ -41,6 +43,11 @@ public class SaleItem {
     private Double porcentage() {
         //Transform 25% in 0.25
         return product.getPackageDiscount() / 100;
+    }
+
+    @Transient
+    public boolean isValid() {
+        return product.getStock() >= amount;
     }
 
     private Double totalPrice() {

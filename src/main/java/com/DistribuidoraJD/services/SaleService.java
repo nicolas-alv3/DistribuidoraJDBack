@@ -1,7 +1,6 @@
 package com.DistribuidoraJD.services;
 
 import com.DistribuidoraJD.model.ProductC;
-import com.DistribuidoraJD.model.ProductCopy;
 import com.DistribuidoraJD.model.Sale;
 import com.DistribuidoraJD.model.SaleItem;
 import com.DistribuidoraJD.persistence.SaleDAO;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Scope(value = "session")
@@ -27,15 +25,20 @@ public class SaleService {
     ProductService productService;
 
     @Transactional
-    public Sale postSale(SaleDTO saleDTO) throws BadSaleFormException {
+    public Sale postSale(SaleDTO saleDTO, List<SaleItem> items) {
+        Sale newSale = new Sale(saleDTO.getClient(),items,saleDTO.getDetails());
+        productService.substractStock(items);
+        return saleDao.save(newSale);
+    }
+
+    public List<SaleItem> fetchItems(SaleDTO saleDTO) {
+        return saleDTO.getSaleItems().stream().map(si -> new SaleItem(fetchProduct(si.getCode()).get().copy(),si.getAmount())).collect(Collectors.toList());
+    }
+
+    public boolean checkIsValidSale(SaleDTO saleDTO) {
         //Check if all products exist
         List<Optional<ProductC>> maybeProducts = saleDTO.getSaleItems().stream().map(si -> fetchProduct(si.getCode())).collect(Collectors.toList());
-        if(maybeProducts.stream().allMatch(Optional::isPresent)){
-            //Initialize SaleItems
-            List<SaleItem> items = saleDTO.getSaleItems().stream().map(si -> new SaleItem(fetchProduct(si.getCode()).get().copy(),si.getAmount())).collect(Collectors.toList());
-            return saleDao.save(new Sale(saleDTO.getClient(),items,saleDTO.getDetails()));
-        }
-        throw new BadSaleFormException();
+        return maybeProducts.stream().allMatch(Optional::isPresent) ;
     }
 
     private Optional<ProductC> fetchProduct(Long code) {

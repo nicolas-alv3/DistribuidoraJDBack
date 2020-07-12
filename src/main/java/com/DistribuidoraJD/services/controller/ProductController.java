@@ -89,6 +89,7 @@ public class ProductController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/product/allNames")
     public ResponseEntity getAllProductNames(){
+        // Return product names if product.stock > 0
         return new ResponseEntity<>(productService.getAllProductsNames(), HttpStatus.OK);
     }
 

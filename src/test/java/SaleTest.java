@@ -1,11 +1,15 @@
+import com.DistribuidoraJD.model.Client;
 import com.DistribuidoraJD.model.ProductCopy;
 import com.DistribuidoraJD.model.Sale;
 import com.DistribuidoraJD.model.SaleItem;
+import com.DistribuidoraJD.model.exception.LackOfStockException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class SaleTest {
 
@@ -73,5 +77,33 @@ public class SaleTest {
         sale.addItem(itemManaos);
 
         Assert.assertEquals(sale.getTotalPrice(),new Double(900));
+    }
+
+    @Test(expected = LackOfStockException.class)
+    public void testWhenTryToAddAnItemWithMoreAmountThanStockItRaiseLackOfStockException(){
+        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2);
+        SaleItem itemManaos = new SaleItem(manaos,3);
+
+        sale.addItem(itemManaos);
+    }
+
+    @Test
+    public void testAfterLackOfStockExceptionTheItemIsNotAdded(){
+        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2);
+        SaleItem itemManaos = new SaleItem(manaos,3);
+        try{
+            sale.addItem(itemManaos);
+        }catch (LackOfStockException e) {}
+        Assert.assertEquals(sale.getAmountOfProducts(),0);
+    }
+
+    @Test(expected = LackOfStockException.class)
+    public void testWhenASaleIsInitializedWithAnInvalidListOfItemsItRaiseException() {
+        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2);
+        SaleItem itemManaos = new SaleItem(manaos,3);
+        List<SaleItem> list = new ArrayList<>();
+        list.add(itemManaos);
+
+        Sale aNewSale = new Sale(new Client(),list,"");
     }
 }
