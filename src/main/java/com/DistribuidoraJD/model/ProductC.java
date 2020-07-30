@@ -12,6 +12,6 @@ public class ProductC extends Product{
     //Concrete product
 
     public ProductCopy copy() {
-        return new ProductCopy(code,name,unitPrice,packageDiscount,amountForDiscount,amountPerPackage,stock);
+        return new ProductCopy(code,name,unitPrice,packageDiscount,amountForDiscount,amountPerPackage,stock,category);
     }
 }

@@ -28,8 +28,10 @@ public abstract class Product {
     protected Integer amountPerPackage;
     @PositiveOrZero
     protected Integer stock;
+    @NotNull
+    protected ProductCategory category;
 
-    public Product(long code , String name, Double unitPrice, Double packageDiscount , Integer amountForDiscount, Integer amountPerPackage, Integer stock){
+    public Product(long code, String name, Double unitPrice, Double packageDiscount, Integer amountForDiscount, Integer amountPerPackage, Integer stock, ProductCategory category){
         this.code = code;
         this.name = name;
         this.unitPrice = unitPrice;
@@ -37,6 +39,7 @@ public abstract class Product {
         this.amountForDiscount = amountForDiscount;
         this.amountPerPackage = amountPerPackage;
         this.stock = stock;
+        this.category = category;
     }
 
     public Product(){
@@ -118,4 +121,11 @@ public abstract class Product {
         this.id = id;
     }
 
+    public ProductCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ProductCategory category) {
+        this.category = category;
+    }
 }

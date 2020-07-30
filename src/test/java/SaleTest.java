@@ -1,7 +1,4 @@
-import com.DistribuidoraJD.model.Client;
-import com.DistribuidoraJD.model.ProductCopy;
-import com.DistribuidoraJD.model.Sale;
-import com.DistribuidoraJD.model.SaleItem;
+import com.DistribuidoraJD.model.*;
 import com.DistribuidoraJD.model.exception.LackOfStockException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,8 +20,8 @@ public class SaleTest {
     public void setup(){
         list = new HashSet<>();
         sale = new Sale();
-        pitusas = new ProductCopy(0,"pitusa", 30d,40d,40,40,40);
-        donSatur = new ProductCopy(1,"donSatur", 30d,40d,40,40,40);
+        pitusas = new ProductCopy(0,"pitusa", 30d,40d,40,40,40, ProductCategory.valueOf("GALLETITAS"));
+        donSatur = new ProductCopy(1,"donSatur", 30d,40d,40,40,40, ProductCategory.valueOf("GALLETITAS"));
         saleItem1 = new SaleItem(pitusas,1);
     }
     @Test
@@ -61,7 +58,7 @@ public class SaleTest {
 
     @Test
     public void testWhenTheAmountForDIscountIsReachedTheDiscountIsMade(){
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,30);
+        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,30, ProductCategory.valueOf("GALLETITAS"));
         SaleItem itemManaos = new SaleItem(manaos,10);
 
         sale.addItem(itemManaos);
@@ -71,7 +68,7 @@ public class SaleTest {
 
     @Test
     public void testWhenTheAmountForDIscountIsMptReachedTheDiscountIsNotMade(){
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,30);
+        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,30, ProductCategory.valueOf("GALLETITAS"));
         SaleItem itemManaos = new SaleItem(manaos,9);
 
         sale.addItem(itemManaos);
@@ -81,7 +78,7 @@ public class SaleTest {
 
     @Test(expected = LackOfStockException.class)
     public void testWhenTryToAddAnItemWithMoreAmountThanStockItRaiseLackOfStockException(){
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2);
+        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2, ProductCategory.valueOf("GALLETITAS"));
         SaleItem itemManaos = new SaleItem(manaos,3);
 
         sale.addItem(itemManaos);
@@ -89,7 +86,7 @@ public class SaleTest {
 
     @Test
     public void testAfterLackOfStockExceptionTheItemIsNotAdded(){
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2);
+        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2, ProductCategory.valueOf("GALLETITAS"));
         SaleItem itemManaos = new SaleItem(manaos,3);
         try{
             sale.addItem(itemManaos);
@@ -99,7 +96,7 @@ public class SaleTest {
 
     @Test(expected = LackOfStockException.class)
     public void testWhenASaleIsInitializedWithAnInvalidListOfItemsItRaiseException() {
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2);
+        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2, ProductCategory.valueOf("GALLETITAS"));
         SaleItem itemManaos = new SaleItem(manaos,3);
         List<SaleItem> list = new ArrayList<>();
         list.add(itemManaos);

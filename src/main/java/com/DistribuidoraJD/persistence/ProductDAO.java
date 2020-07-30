@@ -1,5 +1,6 @@
 package com.DistribuidoraJD.persistence;
 
+import com.DistribuidoraJD.model.Product;
 import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.persistence.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,5 +61,9 @@ public class ProductDAO {
 
     public boolean existProductWithName(String name) {
         return productRepository.findByName(name).isPresent();
+    }
+
+    public List<ProductC> getLike(String name, Long code) {
+        return productRepository.findByNameOrCode(name,code);
     }
 }
