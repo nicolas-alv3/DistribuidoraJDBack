@@ -1,12 +1,15 @@
 package com.DistribuidoraJD.services;
 
-import com.DistribuidoraJD.model.Product;
+import com.DistribuidoraJD.model.ProductC;
+import com.DistribuidoraJD.model.SaleItem;
 import com.DistribuidoraJD.model.exception.LackOfStockException;
 import com.DistribuidoraJD.persistence.ProductDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,41 +19,41 @@ public class ProductService {
     @Autowired
     private ProductDAO productDAO;
 
-    public Product save(Product product){
-        return productDAO.save(product);
+    @Transactional
+    public ProductC save(ProductC productC){
+        return productDAO.save(productC);
     }
 
-    public boolean existProductWithCode(long code) {
-        return productDAO.existProductWithCode(code);
-    }
-
-    public Optional<Product> getByCode(long code) {
+    public Optional<ProductC> getByCode(long code) {
         return productDAO.getByCode(code);
     }
 
+    @Transactional
     public boolean removeByCode(long code) {
         return productDAO.removeByCode(code);
     }
 
-    public List<Product> getAllProducts() {
-        return productDAO.getAllProducts();
+    public Page<ProductC> getAllProducts(int page) {
+        return productDAO.getAllProducts(page);
     }
 
-    public Product update(Product product) {
-        return productDAO.update(product);
+    @Transactional
+    public ProductC update(ProductC productC) {
+        return productDAO.update(productC);
     }
 
+    @Transactional
     public boolean changeStock(long code, int quantity, String op) {
-        Optional<Product> maybeProduct = productDAO.getByCode(code);
+        Optional<ProductC> maybeProduct = productDAO.getByCode(code);
         if(maybeProduct.isPresent()){
-            Product product = maybeProduct.get();
+            ProductC productC = maybeProduct.get();
             switch(op) {
                 case "add":
-                    product.addStock(quantity);
+                    productC.addStock(quantity);
                     return true;
                 case "substract":
                     try {
-                        product.substractStock(quantity);
+                        productC.substractStock(quantity);
                         return true;
                     }catch (LackOfStockException e){
                        return false;
@@ -58,5 +61,27 @@ public class ProductService {
             }
         }
         return false;
+    }
+
+    public List<String> getAllProductsNames() {
+        return productDAO.getAllProductNames();
+    }
+
+    public Optional<ProductC> getByName(String name) {
+        return productDAO.getByName(name);
+    }
+
+    public boolean existProductWithCode(long code) {
+        return productDAO.existProductWithCode(code);
+    }
+
+    public boolean existProductWithName(String name) {
+        return productDAO.existProductWithName(name);
+    }
+
+    public void substractStock(List<SaleItem> items) {
+        items.forEach(
+                item -> this.changeStock(item.getProduct().getCode(),item.getAmount(),"substract")
+        );
     }
 }

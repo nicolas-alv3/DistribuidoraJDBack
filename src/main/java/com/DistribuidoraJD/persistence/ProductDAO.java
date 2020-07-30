@@ -1,8 +1,13 @@
 package com.DistribuidoraJD.persistence;
 
 import com.DistribuidoraJD.model.Product;
+import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.persistence.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,11 +19,11 @@ public class ProductDAO {
     @Autowired
     private ProductRepository productRepository;
 
-    public Product save(Product product){
-        return productRepository.save(product);
+    public ProductC save(ProductC productC){
+        return productRepository.save(productC);
     }
 
-    public Optional<Product> getByCode(long code) {
+    public Optional<ProductC> getByCode(long code) {
         return productRepository.findByCode(code);
     }
 
@@ -34,14 +39,31 @@ public class ProductDAO {
         return false;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<ProductC> getAllProducts(int page) {
+        Pageable pagination = PageRequest.of(page,15);
+        return productRepository.findAll(pagination);
     }
 
-    public Product update(Product product) {
+    public ProductC update(ProductC productC) {
 
-        productRepository.deleteByCode(product.getCode());
+        productRepository.deleteByCode(productC.getCode());
 
-        return productRepository.save(product);
+        return productRepository.save(productC);
+    }
+
+    public List<String> getAllProductNames() {
+        return productRepository.getAllNames();
+    }
+
+    public Optional<ProductC> getByName(String name) {
+        return productRepository.findByName(name);
+    }
+
+    public boolean existProductWithName(String name) {
+        return productRepository.findByName(name).isPresent();
+    }
+
+    public List<ProductC> getLike(String name, Long code) {
+        return productRepository.findByNameOrCode(name,code);
     }
 }

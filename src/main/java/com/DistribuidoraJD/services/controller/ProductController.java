@@ -1,16 +1,17 @@
 package com.DistribuidoraJD.services.controller;
 
 
-import com.DistribuidoraJD.model.Product;
+import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -22,71 +23,81 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @Transactional
+
     @RequestMapping(method = RequestMethod.POST, value = "/product")
-    public ResponseEntity postProduct(@RequestBody Product product){
-        if(productService.existProductWithCode(product.getCode())){
-            return new ResponseEntity<>("Ya existe un producto con ese código", HttpStatus.BAD_REQUEST);
+    public ResponseEntity postProduct(@RequestBody @Valid ProductC productC, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>("Error en el formulario",HttpStatus.BAD_REQUEST);
         }
-        if(correctProduct(product)){
-            return new ResponseEntity<>(productService.save(product), HttpStatus.OK);
+        if(productService.existProductWithCode(productC.getCode())){
+            return new ResponseEntity("Ya existe un producto con ese código", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>("Formulario mal escrito", HttpStatus.NOT_FOUND);
+        if(productService.existProductWithName(productC.getName())){
+            return new ResponseEntity("Ya existe un producto con ese nombre", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(productService.save(productC), HttpStatus.OK);
     }
 
-    private boolean correctProduct(Product product) {
-        return (product.getCode() != 0
-                && product.getName()!= "" && product.getName() != null
-                && product.getAmountPerPackage() > 0  && product.getAmountPerPackage() != null
-                && product.getAmountForDiscount()> 0  && product.getAmountForDiscount() != null
-                && product.getPackageDiscount()> 0  && product.getPackageDiscount() != null
-                && product.getUnitPrice() > 0  && product.getUnitPrice() != null
-                && product.getStock() >= 0  && product.getUnitPrice() != null
-        );
-    }
 
-    @Transactional
     @RequestMapping(method = RequestMethod.PUT, value = "/product")
-    public ResponseEntity updateProduct(@RequestBody Product product){
-        if(!productService.existProductWithCode(product.getCode())){
-            return new ResponseEntity<>("No existe un producto con ese código", HttpStatus.BAD_REQUEST);
+    public ResponseEntity updateProduct(@RequestBody ProductC productC, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>("Error en el formulario",HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(productService.update(product), HttpStatus.OK);
+        if(!productService.existProductWithCode(productC.getCode())){
+            return new ResponseEntity<>("No existe producto con ese codigo",HttpStatus.NOT_FOUND);
+        }
+        if(productService.existProductWithName(productC.getName())){
+            return new ResponseEntity<>("Ya existe un producto con ese nombre",HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(productService.update(productC), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/product/{code}")
-    public ResponseEntity getProduct(@PathVariable("code") long code){
-        Optional<Product> maybeProduct = productService.getByCode(code);
+    public ResponseEntity getProduct(@PathVariable("code") long code) {
+        Optional<ProductC> maybeProduct = productService.getByCode(code);
         if(!maybeProduct.isPresent()){
-            return new ResponseEntity<>("No existe un producto con ese código", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("No se encontro el producto",HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>(maybeProduct.get(), HttpStatus.OK);
     }
 
-    @Transactional
+    @RequestMapping(method = RequestMethod.GET, value = "/product/name/{name}")
+    public ResponseEntity getProduct(@PathVariable("name") String name) {
+        Optional<ProductC> maybeProduct = productService.getByName(name);
+        if(!maybeProduct.isPresent()){
+            return new ResponseEntity<>("No se encontro el producto",HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(maybeProduct.get(), HttpStatus.OK);
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/product/delete/{code}")
-    public ResponseEntity removeProduct(@PathVariable("code") long code){
+    public ResponseEntity removeProduct(@PathVariable("code") long code) {
         if(!productService.removeByCode(code)){
-            return new ResponseEntity<>("No existe un producto con ese código", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("No se encontro el producto",HttpStatus.NOT_FOUND);
         }
 
         return new ResponseEntity<>("Producto con código " + code+ " eliminado", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/allProducts")
-    public ResponseEntity getAllProduct(){
-        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+    @RequestMapping(method = RequestMethod.GET, value = "/product/all/{page}")
+    public ResponseEntity getAllProduct(@PathVariable("page") int page){
+        return new ResponseEntity<>(productService.getAllProducts(page), HttpStatus.OK);
     }
 
-    @Transactional
+    @RequestMapping(method = RequestMethod.GET, value = "/product/allNames")
+    public ResponseEntity getAllProductNames(){
+        // Return product names if product.stock > 0
+        return new ResponseEntity<>(productService.getAllProductsNames(), HttpStatus.OK);
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/product/changeStock/{code}")
     public ResponseEntity changeStock(@PathVariable("code") long code, @RequestBody HashMap<String,String> body){
         if(!productService.changeStock(code,Integer.parseInt(body.get("quantity")),body.get("op"))){
-            return new ResponseEntity<>("No existe un producto con ese código", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("No se encontro el producto",HttpStatus.NOT_FOUND);
         }
-
         return new ResponseEntity<>("Stock cambiado con exito", HttpStatus.OK);
     }
 

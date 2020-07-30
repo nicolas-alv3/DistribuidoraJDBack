@@ -2,22 +2,50 @@ package com.DistribuidoraJD.model;
 
 import com.DistribuidoraJD.model.exception.LackOfStockException;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 @Entity
-public class Product {
+public abstract class Product {
+    //Concrete product
     @Id
     @GeneratedValue
-    private long id;
-    private long code;
-    private String name;
-    private Double unitPrice;
-    private Double packageDiscount; //porcentual
-    private Integer amountForDiscount;
-    private Integer amountPerPackage;
-    private Integer stock;
+    protected long id;
+    @Positive
+    protected long code;
+    @Size(min = 2, max = 50)
+    protected String name;
+    @Positive
+    protected Double unitPrice;
+    @Positive
+    protected Double packageDiscount; //porcentual
+    @Positive
+    protected Integer amountForDiscount;
+    @Positive
+    protected Integer amountPerPackage;
+    @PositiveOrZero
+    protected Integer stock;
+    @NotNull
+    protected ProductCategory category;
+
+    public Product(long code, String name, Double unitPrice, Double packageDiscount, Integer amountForDiscount, Integer amountPerPackage, Integer stock, ProductCategory category){
+        this.code = code;
+        this.name = name;
+        this.unitPrice = unitPrice;
+        this.packageDiscount = packageDiscount;
+        this.amountForDiscount = amountForDiscount;
+        this.amountPerPackage = amountPerPackage;
+        this.stock = stock;
+        this.category = category;
+    }
+
+    public Product(){
+        this.stock = 0;
+    }
+
 
     public String getName() {
         return name;
@@ -27,19 +55,6 @@ public class Product {
         this.name = name;
     }
 
-    public Product(long code ,String name,Double unitPrice,Double packageDiscount , Integer amountForDiscount,Integer amountPerPackage,Integer stock){
-        this.code = code;
-        this.name = name;
-        this.unitPrice = unitPrice;
-        this.packageDiscount = packageDiscount;
-        this.amountForDiscount = amountForDiscount;
-        this.amountPerPackage = amountPerPackage;
-        this.stock = stock;
-    }
-
-    public Product(){
-        this.stock = 0;
-    }
 
     public Double getUnitPrice() {
         return unitPrice;
@@ -100,5 +115,17 @@ public class Product {
         else{
             throw new LackOfStockException("No dispone de suficiente stock para restar");
         }
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public ProductCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(ProductCategory category) {
+        this.category = category;
     }
 }
