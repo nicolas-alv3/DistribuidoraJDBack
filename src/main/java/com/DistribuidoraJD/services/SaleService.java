@@ -53,4 +53,9 @@ public class SaleService {
     public Page<Sale> getAll(int page) {
         return saleDao.getAll(page);
     }
+
+    @Transactional
+    public boolean removeByCode(long code) {
+        return saleDao.removeByCode(code);
+    }
 }

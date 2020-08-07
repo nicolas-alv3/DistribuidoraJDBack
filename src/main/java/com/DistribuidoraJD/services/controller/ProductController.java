@@ -44,10 +44,12 @@ public class ProductController {
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>("Error en el formulario",HttpStatus.BAD_REQUEST);
         }
+
+        Optional<ProductC> maybeProduct = productService.getByName(productC.getName());
         if(!productService.existProductWithCode(productC.getCode())){
             return new ResponseEntity<>("No existe producto con ese codigo",HttpStatus.NOT_FOUND);
         }
-        if(productService.existProductWithName(productC.getName())){
+        if(maybeProduct.isPresent() && productC.getCode() != maybeProduct.get().getCode()){
             return new ResponseEntity<>("Ya existe un producto con ese nombre",HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(productService.update(productC), HttpStatus.OK);

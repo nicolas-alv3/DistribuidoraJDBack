@@ -20,7 +20,7 @@ public abstract class Product {
     protected String name;
     @Positive
     protected Double unitPrice;
-    @Positive
+    @PositiveOrZero
     protected Double packageDiscount; //porcentual
     @Positive
     protected Integer amountForDiscount;

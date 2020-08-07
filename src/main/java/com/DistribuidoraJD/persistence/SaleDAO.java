@@ -33,4 +33,16 @@ public class SaleDAO {
     public List<Sale> getLike(String name, long code) {
         return saleRepository.findByClientNameLike(name,code);
     }
+
+    private boolean existSaleWithCode(long id) {
+        return saleRepository.findById(id).isPresent();
+    }
+
+    public boolean removeByCode(long id) {
+        if(existSaleWithCode(id)){
+            saleRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
