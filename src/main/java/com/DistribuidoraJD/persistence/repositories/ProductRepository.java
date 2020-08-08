@@ -1,11 +1,11 @@
 package com.DistribuidoraJD.persistence.repositories;
 
 import com.DistribuidoraJD.model.ProductC;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.validation.constraints.FutureOrPresent;
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,5 +23,5 @@ public interface ProductRepository extends JpaRepository<ProductC,Long> {
     void deleteByCode(long code);
 
     @Query("select p from ProductC p where p.name like %:name% or p.code = :code ")
-    List<ProductC> findByNameOrCode(String name, Long code);
+    Page<ProductC> findByNameOrCode(String name, Long code, Pageable page);
 }
