@@ -1,10 +1,8 @@
 package com.DistribuidoraJD.persistence;
 
-import com.DistribuidoraJD.model.Product;
 import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.persistence.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -63,7 +61,8 @@ public class ProductDAO {
         return productRepository.findByName(name).isPresent();
     }
 
-    public List<ProductC> getLike(String name, Long code) {
-        return productRepository.findByNameOrCode(name,code);
+    public Page<ProductC> getLike(String name, Long code, Integer page) {
+        Pageable pagination = PageRequest.of(page,10);
+        return productRepository.findByNameOrCode(name,code,pagination);
     }
 }

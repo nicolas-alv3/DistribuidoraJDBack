@@ -46,7 +46,7 @@ public class SaleItem {
     }
 
     @Transient
-    public boolean isValid() {
+    public boolean isValidStock() {
         return product.getStock() >= amount;
     }
 

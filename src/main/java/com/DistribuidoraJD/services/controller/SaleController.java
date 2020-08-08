@@ -4,7 +4,6 @@ import com.DistribuidoraJD.model.Sale;
 import com.DistribuidoraJD.model.SaleItem;
 import com.DistribuidoraJD.services.SaleService;
 import com.DistribuidoraJD.services.dto.SaleDTO;
-import com.DistribuidoraJD.services.exception.BadSaleFormException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -37,7 +36,7 @@ public class SaleController {
             return new ResponseEntity<>("Algun codigo de producto no existe",HttpStatus.NOT_FOUND);
         }
         List<SaleItem> items = saleService.fetchItems(saleDTO);
-        if(!items.stream().allMatch(SaleItem::isValid)){
+        if(!items.stream().allMatch(SaleItem::isValidStock)){
             return new ResponseEntity<>("Estas queriendo vender mas el stock que tenés",HttpStatus.BAD_REQUEST);
         }
         try{
@@ -61,4 +60,14 @@ public class SaleController {
     public ResponseEntity getAllSale(@PathVariable int page) {
         return new ResponseEntity<>(saleService.getAll(page), HttpStatus.OK);
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/sale/delete/{code}")
+    public ResponseEntity removeProdupostct(@PathVariable("code") long code) {
+        if(!saleService.removeByCode(code)){
+            return new ResponseEntity<>("No se encontro la venta",HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>("Venta con código " + code+ " eliminado", HttpStatus.OK);
+    }
+
 }

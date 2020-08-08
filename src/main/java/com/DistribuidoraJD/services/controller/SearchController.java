@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @CrossOrigin
 @RestController
 @Scope(value = "session")
@@ -20,25 +18,25 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/search/product/{data}")
-    public ResponseEntity getProtSearch(@PathVariable("data") String data) {
+    @RequestMapping(method = RequestMethod.GET, value = "/search/product/{data}/{page}")
+    public ResponseEntity getProtSearch(@PathVariable("data") String data,@PathVariable("page") Integer page) {
         Long code;
         try{
             code = Long.parseLong(data);
         }catch (Exception e) {
             code = new Long(-1);
         }
-        return new ResponseEntity<>(searchService.searchProduct(data,code), HttpStatus.OK);
+        return new ResponseEntity<>(searchService.searchProduct(data,code,page), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/search/sale/{data}")
-    public ResponseEntity getSaleSearch(@PathVariable("data") String data) {
+    @RequestMapping(method = RequestMethod.GET, value = "/search/sale/{data}/{page}")
+    public ResponseEntity getSaleSearch(@PathVariable("data") String data,@PathVariable("page") Integer page) {
         Long code;
         try{
             code = Long.parseLong(data);
         }catch (Exception e) {
             code = new Long(-1);
         }
-        return new ResponseEntity<>(searchService.searchSale(data,code), HttpStatus.OK);
+        return new ResponseEntity<>(searchService.searchSale(data,code,page), HttpStatus.OK);
     }
 }

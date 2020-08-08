@@ -30,7 +30,20 @@ public class SaleDAO {
         return saleRepository.findAll(pagination);
     }
 
-    public List<Sale> getLike(String name, long code) {
-        return saleRepository.findByClientNameLike(name,code);
+    public Page<Sale> getLike(String name, long code, Integer page) {
+        Pageable pagination = PageRequest.of(page,10);
+        return saleRepository.findByClientNameLike(name,code,pagination);
+    }
+
+    private boolean existSaleWithCode(long id) {
+        return saleRepository.findById(id).isPresent();
+    }
+
+    public boolean removeByCode(long id) {
+        if(existSaleWithCode(id)){
+            saleRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
