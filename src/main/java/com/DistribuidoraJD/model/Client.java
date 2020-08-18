@@ -15,6 +15,13 @@ public class Client {
     private String address;
     private Integer dni;
 
+    public Client(String name, String address, int dni) {
+
+        this.name = name;
+        this.address = address;
+        this.dni = dni;
+    }
+
     public String getName() {
         return name;
     }
