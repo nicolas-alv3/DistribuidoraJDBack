@@ -28,7 +28,6 @@ public class SaleController {
     @Autowired
     private SaleService saleService;
 
-    @Transactional
     @RequestMapping(method = RequestMethod.POST, value = "/sale")
     public ResponseEntity postSale(@RequestBody @Valid SaleDTO saleDTO, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
