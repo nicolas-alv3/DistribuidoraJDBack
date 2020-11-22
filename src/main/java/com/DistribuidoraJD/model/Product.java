@@ -10,7 +10,6 @@ import javax.validation.constraints.Size;
 
 @Entity
 public abstract class Product {
-    //Concrete product
     @Id
     @GeneratedValue
     protected long id;
@@ -113,7 +112,7 @@ public abstract class Product {
             this.stock = stock - n;
         }
         else{
-            throw new LackOfStockException("No dispone de suficiente stock para restar");
+            throw new LackOfStockException();
         }
     }
 

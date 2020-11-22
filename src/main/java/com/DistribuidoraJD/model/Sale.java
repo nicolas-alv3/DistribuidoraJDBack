@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @NamedEntityGraph(name = "Sale.detail",
@@ -19,19 +20,23 @@ public class Sale {
     Client client;
     //@JsonBackReference Con esto no te trae los datos de una
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private List<SaleItem> items;
+    private List<SoldItem> items;
     @NotNull
     private LocalDate date;
     @NotNull
     private String details;
+    @Transient
+    private List<ProductC> products;
 
     public Sale(){
         items = new ArrayList<>();
         date=LocalDate.now();
+        products=new ArrayList<>();
     }
 
     public Sale(Client cliente, List<SaleItem> list,String detail){
         items = new ArrayList<>();
+        products=new ArrayList<>();
         this.addList(list);
         client = cliente;
         details = detail;
@@ -44,7 +49,7 @@ public class Sale {
 
     public Double getTotalPrice() {
         //Sumatory of all unitPrices
-        return items.stream().map(SaleItem::getPrice).reduce(0d,Double::sum);
+        return items.stream().map(SoldItem::getPrice).reduce(0d,Double::sum);
     }
 
     public long getId() {
@@ -63,17 +68,13 @@ public class Sale {
         return date;
     }
 
-    public List<SaleItem> getItems() {return items;}
+    public List<SoldItem> getItems() {return items;}
 
-    public List<SaleItem> setItems() {return items;}
+    public List<SoldItem> setItems() {return items;}
 
     public void addItem(SaleItem saleItem) {
-        if(isSufficientStock(saleItem)){
-            this.items.add(saleItem);
-        }
-        else{
-            throw new LackOfStockException("Insufficient Stock");
-        }
+        products.add(saleItem.getProduct());
+        items.add(new SoldItem(saleItem.getProduct().copy(), saleItem.getAmount()));
     }
 
     private boolean isSufficientStock(SaleItem saleItem) {
@@ -81,7 +82,7 @@ public class Sale {
     }
 
     public int getAmountOfProducts() {
-        return items.stream().map(SaleItem::getAmount).reduce(0,Integer::sum);
+        return items.stream().map(SoldItem::getAmount).reduce(0,Integer::sum);
     }
 
     public String getDetails() {
@@ -91,4 +92,15 @@ public class Sale {
     public void setDetails(String details) {
         this.details = details;
     }
+
+    public List<ProductC> getProducts() {
+        return this.products;
+    }
+
+    public void close() {
+        for (int i = 0; i < products.size(); i++) {
+            products.get(i).substractStock(items.get(i).getAmount());
+        }
+    }
+
 }

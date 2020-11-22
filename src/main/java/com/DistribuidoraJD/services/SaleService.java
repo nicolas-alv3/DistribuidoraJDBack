@@ -6,6 +6,8 @@ import com.DistribuidoraJD.model.SaleItem;
 import com.DistribuidoraJD.persistence.SaleDAO;
 import com.DistribuidoraJD.services.dto.SaleDTO;
 import com.DistribuidoraJD.services.exception.BadSaleFormException;
+import com.DistribuidoraJD.services.exception.ProductNotFoundException;
+import com.DistribuidoraJD.services.exception.SaleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.domain.Page;
@@ -25,14 +27,27 @@ public class SaleService {
     ProductService productService;
 
     @Transactional
-    public Sale postSale(SaleDTO saleDTO, List<SaleItem> items) {
+    public Sale postSale(SaleDTO saleDTO) {
+        List <SaleItem> items = fetchItems(saleDTO);
         Sale newSale = new Sale(saleDTO.getClient(),items,saleDTO.getDetails());
-        productService.substractStock(items);
+        productService.updateAll(newSale.getProducts());
+        newSale.close();
         return saleDao.save(newSale);
     }
 
     public List<SaleItem> fetchItems(SaleDTO saleDTO) {
-        return saleDTO.getSaleItems().stream().map(si -> new SaleItem(fetchProduct(si.getCode()).get().copy(),si.getAmount())).collect(Collectors.toList());
+        return saleDTO.getSaleItems().stream().map(
+                si -> new SaleItem(fetchOrRaise(si.getCode()), si.getAmount())
+                )
+        .collect(Collectors.toList());
+    }
+
+    private ProductC fetchOrRaise(Long code) {
+        Optional<ProductC> maybeProduct = fetchProduct(code);
+        if(maybeProduct.isPresent())
+            return maybeProduct.get();
+        else
+            throw new ProductNotFoundException();
     }
 
     public boolean checkIsValidSale(SaleDTO saleDTO) {
@@ -45,9 +60,13 @@ public class SaleService {
         return productService.getByCode(code);
     }
 
-    public Optional<Sale> getById(long id) {
+    public Sale getById(long id) {
         Optional<Sale> maybeSale = saleDao.getById(id);
-        return maybeSale;
+        if (maybeSale.isPresent())
+            return maybeSale.get();
+        else
+            throw new SaleNotFoundException();
+
     }
 
     public Page<Sale> getAll(int page) {

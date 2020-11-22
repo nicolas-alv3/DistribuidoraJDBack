@@ -23,12 +23,12 @@ public class DistribuidoraJdApplication {
 		SpringApplication.run(DistribuidoraJdApplication.class, args);
 	}
 
-    @Bean
+/*    @Bean
     public CommandLineRunner demo(ProductRepository productRepository, SaleRepository saleRepository) {
         return (args) -> {
             // Just to test with lot of products and sales
-            /*createDemoProducts(productRepository,10000);
-            createDemoSales(saleRepository,1);*/
+            *//*createDemoProducts(productRepository,10000);
+            createDemoSales(saleRepository,1);*//*
         };
     }
 
@@ -50,5 +50,5 @@ public class DistribuidoraJdApplication {
             productRepository.save(donSatur);
         }
 
-    }
+    }*/
 }

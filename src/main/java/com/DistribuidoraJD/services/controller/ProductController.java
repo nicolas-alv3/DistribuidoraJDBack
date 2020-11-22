@@ -3,6 +3,7 @@ package com.DistribuidoraJD.services.controller;
 
 import com.DistribuidoraJD.model.ProductC;
 import com.DistribuidoraJD.services.ProductService;
+import com.DistribuidoraJD.services.dto.StockDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -28,12 +29,6 @@ public class ProductController {
     public ResponseEntity postProduct(@RequestBody @Valid ProductC productC, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>("Error en el formulario",HttpStatus.BAD_REQUEST);
-        }
-        if(productService.existProductWithCode(productC.getCode())){
-            return new ResponseEntity("Ya existe un producto con ese código", HttpStatus.NOT_FOUND);
-        }
-        if(productService.existProductWithName(productC.getName())){
-            return new ResponseEntity("Ya existe un producto con ese nombre", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(productService.save(productC), HttpStatus.OK);
     }
@@ -96,11 +91,8 @@ public class ProductController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/product/changeStock/{code}")
-    public ResponseEntity changeStock(@PathVariable("code") long code, @RequestBody HashMap<String,String> body){
-        if(!productService.changeStock(code,Integer.parseInt(body.get("quantity")),body.get("op"))){
-            return new ResponseEntity<>("No se encontro el producto",HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>("Stock cambiado con exito", HttpStatus.OK);
+    public ResponseEntity changeStock(@PathVariable("code") long code, @RequestBody StockDTO stockDTO){
+        return new ResponseEntity<>(productService.changeStock(code ,stockDTO.getAmount(),stockDTO.getAdd()), HttpStatus.OK);
     }
 
 }

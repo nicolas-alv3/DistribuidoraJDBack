@@ -11,17 +11,17 @@ import java.util.List;
 public class SaleTest {
 
     private Sale sale;
-    private ProductCopy pitusas;
-    private ProductCopy donSatur;
-    private HashSet<ProductCopy> list;
+    private ProductC pitusas;
+    private ProductC donSatur;
+    private HashSet<ProductC> list;
     private SaleItem saleItem1;
 
     @Before
     public void setup(){
         list = new HashSet<>();
         sale = new Sale();
-        pitusas = new ProductCopy(0,"pitusa", 30d,40d,40,40,40, ProductCategory.valueOf("GALLETITAS"));
-        donSatur = new ProductCopy(1,"donSatur", 30d,40d,40,40,40, ProductCategory.valueOf("GALLETITAS"));
+        pitusas = new ProductC(0,"pitusa", 30d,40d,40,40,40, ProductCategory.valueOf("GALLETITAS"));
+        donSatur = new ProductC(1,"donSatur", 30d,40d,40,40,40, ProductCategory.valueOf("GALLETITAS"));
         saleItem1 = new SaleItem(pitusas,1);
     }
     @Test
@@ -58,7 +58,7 @@ public class SaleTest {
 
     @Test
     public void testWhenTheAmountForDIscountIsReachedTheDiscountIsMade(){
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,30, ProductCategory.valueOf("GALLETITAS"));
+        ProductC manaos = new ProductC(22,"Manaos",100d,5d,10,6,30, ProductCategory.valueOf("GALLETITAS"));
         SaleItem itemManaos = new SaleItem(manaos,10);
 
         sale.addItem(itemManaos);
@@ -68,7 +68,7 @@ public class SaleTest {
 
     @Test
     public void testWhenTheAmountForDIscountIsMptReachedTheDiscountIsNotMade(){
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,30, ProductCategory.valueOf("GALLETITAS"));
+        ProductC manaos = new ProductC(22,"Manaos",100d,5d,10,6,30, ProductCategory.valueOf("GALLETITAS"));
         SaleItem itemManaos = new SaleItem(manaos,9);
 
         sale.addItem(itemManaos);
@@ -77,30 +77,23 @@ public class SaleTest {
     }
 
     @Test(expected = LackOfStockException.class)
-    public void testWhenTryToAddAnItemWithMoreAmountThanStockItRaiseLackOfStockException(){
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2, ProductCategory.valueOf("GALLETITAS"));
-        SaleItem itemManaos = new SaleItem(manaos,3);
-
-        sale.addItem(itemManaos);
-    }
-
-    @Test
-    public void testAfterLackOfStockExceptionTheItemIsNotAdded(){
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2, ProductCategory.valueOf("GALLETITAS"));
-        SaleItem itemManaos = new SaleItem(manaos,3);
-        try{
-            sale.addItem(itemManaos);
-        }catch (LackOfStockException e) {}
-        Assert.assertEquals(sale.getAmountOfProducts(),0);
-    }
-
-    @Test(expected = LackOfStockException.class)
-    public void testWhenASaleIsInitializedWithAnInvalidListOfItemsItRaiseException() {
-        ProductCopy manaos = new ProductCopy(22,"Manaos",100d,5d,10,6,2, ProductCategory.valueOf("GALLETITAS"));
+    public void testWhenASaleIsInitializedWithAnInvalidListOfItemsWhenCloseItRaiseException() {
+        ProductC manaos = new ProductC(22,"Manaos",100d,5d,10,6,2, ProductCategory.valueOf("GALLETITAS"));
         SaleItem itemManaos = new SaleItem(manaos,3);
         List<SaleItem> list = new ArrayList<>();
         list.add(itemManaos);
 
         Sale aNewSale = new Sale(new Client(),list,"");
+
+        aNewSale.close();
     }
+
+    @Test(expected = LackOfStockException.class)
+    public void testWhenTryCloseASaleWhithoutStockItRaisesLackOfStockExceptn(){
+        ProductC manaos = new ProductC(22,"Manaos",100d,5d,10,6,2, ProductCategory.valueOf("GALLETITAS"));
+        SaleItem itemManaos = new SaleItem(manaos,3);
+        sale.addItem(itemManaos);
+        sale.close();
+    }
+
 }

@@ -2,6 +2,7 @@ package com.DistribuidoraJD.services.controller;
 
 import com.DistribuidoraJD.model.Sale;
 import com.DistribuidoraJD.model.SaleItem;
+import com.DistribuidoraJD.model.exception.DistribuidoraJDException;
 import com.DistribuidoraJD.services.SaleService;
 import com.DistribuidoraJD.services.dto.SaleDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -32,28 +34,11 @@ public class SaleController {
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>("Hay errores en el formulario",HttpStatus.BAD_REQUEST);
         }
-        if(!saleService.checkIsValidSale(saleDTO)){
-            return new ResponseEntity<>("Algun codigo de producto no existe",HttpStatus.NOT_FOUND);
-        }
-        List<SaleItem> items = saleService.fetchItems(saleDTO);
-        if(!items.stream().allMatch(SaleItem::isValidStock)){
-            return new ResponseEntity<>("Estas queriendo vender mas el stock que tenés",HttpStatus.BAD_REQUEST);
-        }
-        try{
-            return new ResponseEntity<>(saleService.postSale(saleDTO,items), HttpStatus.CREATED);
-        }
-        catch (Exception e){
-            return new ResponseEntity<>("Algo salio mal,la venta no pudo ser concretada",HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(saleService.postSale(saleDTO), HttpStatus.CREATED);
     }
-
     @RequestMapping(method = RequestMethod.GET, value = "/sale/{id}")
     public ResponseEntity getSale(@PathVariable("id") long id) {
-        Optional<Sale> maybeProduct = saleService.getById(id);
-        if(!maybeProduct.isPresent()){
-            return new ResponseEntity<>("No se encontro la venta",HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(maybeProduct.get(), HttpStatus.OK);
+        return new ResponseEntity<>(saleService.getById(id), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/sale/all/{page}")
